@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/jbutcher93/snippetbox/internal/models"
 	"html/template"
 	"path/filepath"
+
+	"github.com/jbutcher93/snippetbox/internal/models"
 )
 
 type templateData struct {
