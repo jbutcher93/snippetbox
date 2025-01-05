@@ -1,0 +1,27 @@
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - 4000:4000
+    depends_on:
+      mysql:
+        condition: service_healthy
+        restart: true
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 3
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: snippetbox
+      MYSQL_USER: web
+      MYSQL_PASSWORD: pass
+    ports:
+      - 3306:3306
+    volumes:
+      - ./scritps/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
