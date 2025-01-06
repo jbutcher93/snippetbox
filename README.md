@@ -1,15 +1,16 @@
 # Description
 
 I've been working through [Let's Go by Alex Edwards](https://lets-go.alexedwards.net/), which has 
-been a great resource to development fundamentals in Go web development.
+been a great resource for fundamentals in Go web development.
 
-Building on that this repository has become a general resource for me to play with other technologies.
+Building on that, I use this repository to play with various other technologies.
 
 ### kind
 
 To spin up a kind cluster with a local registry on `localhost:5001`
 
 ```sh
+chmod u+x ./scripts/kind/local-registry.sh
 ./scripts/kind/local-registry.sh
 ```
 
