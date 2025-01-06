@@ -16,6 +16,10 @@ spec:
       containers:
       - name: snippetbox
         image: localhost:5001/snippetbox:latest
+        command: ["/snippetbox"]
+        args:
+        - "-dsn"
+        - "root:example@/snippetbox?parseTime=true" 
         ports:
         - containerPort: 4000
         env:
