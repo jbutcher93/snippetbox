@@ -16,7 +16,7 @@ spec:
       containers:
       - name: snippetbox
         image: localhost:5001/snippetbox:latest
-        command: ["/snippetbox"]
+        command: ["./web"]
         args:
         - "-dsn"
         - "root:example@/snippetbox?parseTime=true" 
