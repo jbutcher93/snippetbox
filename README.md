@@ -30,7 +30,11 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-Currently ArgoCD has an Application synced to this repository's `kubernetes/manifests`
+To install the Application synced to this repository's `kubernetes/manifests`
+
+```
+kubectl apply -f kubernetes/apps/snippetbox.yaml
+```
 
 To visit the Web UI:
 
