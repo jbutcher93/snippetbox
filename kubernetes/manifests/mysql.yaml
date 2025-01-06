@@ -4,11 +4,10 @@ metadata:
   name: mysql
   namespace: workloads
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
