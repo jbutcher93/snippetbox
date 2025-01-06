@@ -10,8 +10,11 @@ spec:
   project: default
   source:
     path: kubernetes/manifests
-    repoURL: github.com/jbutcher93/snippetbox
+    repoURL: https://github.com/jbutcher93/snippetbox
     targetRevision: main
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: false

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: snippetbox
-        image: snippetbox:latest
+        image: localhost:5001/snippetbox:latest
         ports:
         - containerPort: 4000
         env:
