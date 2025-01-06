@@ -19,14 +19,9 @@ spec:
         command: ["./web"]
         args:
         - "-dsn"
-        - "root:example@/snippetbox?parseTime=true" 
+        - "root:example@tcp(mysql.workloads.svc.cluster.local:3306)/snippetbox?parseTime=true" 
         ports:
         - containerPort: 4000
-        env:
-        - name: addr
-          value: :4000
-        - name: dsn
-          value: root:example@/snippetbox?parseTime=true
 ---
 apiVersion: v1
 kind: Service
