@@ -23,3 +23,17 @@ spec:
           value: :4000
         - name: dsn
           value: root:example@/snippetbox?parseTime=true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snippetbox
+  namespace: workloads
+spec:
+  selector:
+    app: snippetbox
+  ports:
+  - protocol: TCP
+    port: 4000
+    targetPort: 4000
+  type: ClusterIP
