@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snippetbox
+  namespace: apps
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snippetbox
+  template:
+    metadata:
+      labels:
+        app: snippetbox
+    spec:
+      containers:
+      - name: snippetbox
+        image: snippetbox:latest
+        ports:
+        - containerPort: 4000
+        env:
+        - name: addr
+          value: :4000
+        - name: dsn
+          value: root:example@/snippetbox?parseTime=true
