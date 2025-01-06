@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: snippetbox
-  namespace: apps
+  namespace: workloads
 spec:
   replicas: 3
   selector:
