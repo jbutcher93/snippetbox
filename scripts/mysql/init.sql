@@ -38,11 +38,13 @@ INSERT INTO snippets (title, content, created, expires) VALUES (
     DATE_ADD(UTC_TIMESTAMP(), INTERVAL 7 DAY)
 );
 
-CREATE USER 'web'@'localhost';
+CREATE TABLE sessions (
+    token CHAR(43) PRIMARY KEY,
+    data BLOB NOT NULL,
+    expiry TIMESTAMP(6) NOT NULL
+);
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON snippetbox.* TO 'web'@'localhost';
-
-ALTER USER 'web'@'localhost' IDENTIFIED BY 'pass';
+CREATE INDEX sessions_expiry_idx ON sessions (expiry);
 
 CREATE TABLE users (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,

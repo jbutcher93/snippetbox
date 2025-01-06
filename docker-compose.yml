@@ -1,27 +1,38 @@
 services:
   web:
+    pull_policy: build
     build: 
       context: .
       dockerfile: Dockerfile
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 3
     ports: 
       - 4000:4000
     depends_on:
       mysql:
         condition: service_healthy
         restart: true
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 3s
-        max_attempts: 3
-  mysql:
-    image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: snippetbox
-      MYSQL_USER: web
-      MYSQL_PASSWORD: pass
+      ENV: development
+  mysql:
+    develop:
+      watch:
+        - path: ./scripts/mysql/init.sql
+          action: restart
+    image: mysql:latest
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      MYSQL_ROOT_PASSWORD: example
     ports:
       - 3306:3306
     volumes:
-      - ./scritps/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - type: bind
+        source: ./scripts/mysql/init.sql
+        target: /docker-entrypoint-initdb.d/init.sql
