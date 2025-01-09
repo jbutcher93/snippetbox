@@ -10,14 +10,14 @@ Building on that, I use this repository to play with various other technologies.
 To spin up a kind cluster with a local registry on `localhost:5001`
 
 ```sh
-chmod u+x ./scripts/kind/local-registry.sh
+chmod u+x ./scripts/kind/local-registry.sh && \
 ./scripts/kind/local-registry.sh
 ```
 
 To make the images accessible from within your kind cluster:
 
 ```sh
-docker tag <image>:<tag> localhost:5001/<image>:<tag>
+docker tag <image>:<tag> localhost:5001/<image>:<tag> && \
 docker push localhost:5001/<image>:<tag>
 ```
 
@@ -26,7 +26,7 @@ docker push localhost:5001/<image>:<tag>
 To install the core functionality for ArgoCD:
 
 ```sh
-kubectl create namespace argocd
+kubectl create namespace argocd && \
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
