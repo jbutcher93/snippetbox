@@ -32,7 +32,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 To install the Application synced to this repository's `kubernetes/manifests`
 
-```
+```sh
 kubectl apply -f kubernetes/apps/snippetbox.yaml
 ```
 
