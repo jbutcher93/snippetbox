@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: worker1
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+    name: worker1
+stringData:
+  name: worker1
+  server: https://worker1-control-plane:6443
+
+  # The bearer token is unique to each Service Account created
+  # kubectl create token <service-account-name>
+  config: |
+    {
+      "bearerToken": "placeholder",
+      "tlsClientConfig": {
+        "insecure": true
+      }
+    }

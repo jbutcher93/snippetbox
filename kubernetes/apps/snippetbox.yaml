@@ -1,20 +1,29 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: snippetbox
   namespace: argocd
 spec:
-  destination:
-    namespace: workloads
-    server: https://kubernetes.default.svc
-  project: default
-  source:
-    path: kubernetes/manifests
-    repoURL: https://github.com/jbutcher93/snippetbox
-    targetRevision: main
-  syncPolicy:
-    syncOptions:
-    - CreateNamespace=true
-    automated:
-      prune: true
-      selfHeal: false
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            argocd.argoproj.io/secret-type: cluster
+  template:
+    metadata:
+      name: "snippetbox-{{metadata.labels.name}}"
+    spec:
+      destination:
+        namespace: workloads
+        server: "{{server}}"
+      project: default
+      source:
+        path: kubernetes/manifests
+        repoURL: https://github.com/jbutcher93/snippetbox
+        targetRevision: main
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: false

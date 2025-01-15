@@ -9,6 +9,7 @@ services:
         condition: on-failure
         delay: 3s
         max_attempts: 3
+    command: ["./web", "-dsn", "root:example@tcp(mysql:3306)/snippetbox?parseTime=true"]
     ports: 
       - 4000:4000
     depends_on:
@@ -21,7 +22,7 @@ services:
     develop:
       watch:
         - path: ./scripts/mysql/init.sql
-          action: restart
+          action: rebuild
     image: mysql:latest
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
