@@ -10,13 +10,15 @@ if [ "$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true
     registry:2
 fi
 
-# 2. Create kind config cluster with containerd registry config dir enabled
-# TODO: kind will eventually enable this by default and this patch will
-# be unnecessary.
+# 2. Create clusters with containerd registry config dir enabled
+
+CLUSTERS=("config" "worker1" "worker2")
+
+for cluster in ${CLUSTERS[@]}; do
 {
 cat <<EOF | kind create cluster --config=-
 kind: Cluster
-name: config
+name: ${cluster}
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
 - |-
@@ -24,45 +26,20 @@ containerdConfigPatches:
     config_path = "/etc/containerd/certs.d"
 EOF
 } || true
+done
 
-kubectl create namespace argocd --context kind-config && \
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --context kind-config && \
+kubectl create namespace argocd --context kind-config
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --context kind-config
 kubectl apply -f kubernetes/apps/snippetbox.yaml --context kind-config
-
-# 2a. Create kind worker clusters
-{
-cat <<EOF | kind create cluster --config=-
-kind: Cluster
-name: worker1
-apiVersion: kind.x-k8s.io/v1alpha4
-containerdConfigPatches:
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry]
-    config_path = "/etc/containerd/certs.d"
-EOF
-} || true
 
 # 2b. Create argocd token and apply worker-rbac
 kubectl apply -f kubernetes/config/worker-rbac.yaml --context kind-worker1
 TOKEN=$(kubectl create token argocd --context kind-worker1)
 sed "s/placeholder/${TOKEN}"/ kubernetes/config/worker1.yaml | kubectl apply --context kind-config -f -
 
-{
-cat <<EOF | kind create cluster --config=-
-kind: Cluster
-name: worker2
-apiVersion: kind.x-k8s.io/v1alpha4
-containerdConfigPatches:
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry]
-    config_path = "/etc/containerd/certs.d"
-EOF
-} || true
-
 kubectl apply -f kubernetes/config/worker-rbac.yaml --context kind-worker2
 TOKEN=$(kubectl create token argocd --context kind-worker2)
 sed "s/placeholder/${TOKEN}"/ kubernetes/config/worker2.yaml | kubectl apply --context kind-config -f -
-
 
 # 3. Add the registry config to the nodes
 #
@@ -101,9 +78,9 @@ for cluster in $(kind get clusters); do
       help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-delete() {
-  CLUSTERS=$(kind get clusters)
-  for cluster in ${CLUSTERS[@]}; do 
-    kind delete cluster --name $cluster
-  done
-}
+# delete() {
+#   CLUSTERS=$(kind get clusters)
+#   for cluster in ${CLUSTERS[@]}; do 
+#     kind delete cluster --name $cluster
+#   done
+# }
