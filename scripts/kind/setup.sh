@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+# Tells the script to exit immediately if any command returns a non-zero exit status
 set -o errexit
 
 # 1. Create registry container unless it already exists
@@ -9,6 +11,10 @@ if [ "$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true
     -d --restart=always -p "127.0.0.1:${reg_port}:5000" --network bridge --name "${reg_name}" \
     registry:2
 fi
+
+# 1a. Build and push container image to registry
+docker build . -f Dockerfile -t localhost:${reg_port}/snippetbox:latest 
+docker push localhost:${reg_port}/snippetbox:latest
 
 # 2. Create clusters with containerd registry config dir enabled
 
@@ -25,11 +31,11 @@ containerdConfigPatches:
   [plugins."io.containerd.grpc.v1.cri".registry]
     config_path = "/etc/containerd/certs.d"
 EOF
-} || true
+} 2> /dev/null || true
 done
 
-kubectl create namespace argocd --context kind-config
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --context kind-config
+kubectl create namespace argocd --context kind-config &> /dev/null || true
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --context kind-config &> /dev/null
 kubectl apply -f kubernetes/apps/snippetbox.yaml --context kind-config
 
 # 2b. Create argocd token and apply worker-rbac
@@ -77,10 +83,4 @@ for cluster in $(kind get clusters); do
       host: "localhost:${reg_port}"
       help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
-
-# delete() {
-#   CLUSTERS=$(kind get clusters)
-#   for cluster in ${CLUSTERS[@]}; do 
-#     kind delete cluster --name $cluster
-#   done
-# }
+done
