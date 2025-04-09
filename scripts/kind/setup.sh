@@ -20,6 +20,7 @@ docker push localhost:${reg_port}/snippetbox:latest
 
 CLUSTERS=("config" "worker1" "worker2")
 
+echo "Creating clusters with containerd registry config dir enabled..."
 for cluster in ${CLUSTERS[@]}; do
 {
 cat <<EOF | kind create cluster --config=-
